@@ -1,32 +1,68 @@
 #include <iostream>
 #include <string>
-#include <fstream>
-#include "tv_show.h"
-#include "movie.h"
+#include <cstdint>
+#include <memory>
 
-using namespace std;
+#include <curl/curl.h>
+#include "json/json.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-int main() {
-    TV_Show arrow("Arrow", "action", "CW");
-    arrow.addEpisodes(15);
-    ++arrow;
-    arrow.displayInfo();
-    Movie wonder_woman("Wonder Woman", "action");
-    wonder_woman.bindToSeries(&arrow);
-    string actors[] = {"Chris Pain", "Gal Gadot"};
-    wonder_woman.add_actors(actors);
-    wonder_woman.displayInfo();
-    wonder_woman.show_actors();
-    int64_t fib[90];
-    fib[0] = 0;
-    fib[1] = 1;
-    for (int i = 2; i < 90; ++i) {
-        fib[i] = fib[i-1] + fib[i-2];
+#include "HtmlElement.h"
+#include "HtmlParser.h"
+
+namespace
+{
+    std::size_t callback(
+            const char* in,
+            std::size_t size,
+            std::size_t num,
+            std::string* out)
+    {
+        const std::size_t totalBytes(size * num);
+        out->append(in, totalBytes);
+        return totalBytes;
     }
-    ofstream fib_file("fib.txt");
-    for (int i = 0; i < 90; ++i) {
-        fib_file << fib[i] << endl;
+}
+
+int main(int argc, char* argv[]) {
+    std::string url("https://neon-pictures.herokuapp.com/");
+
+    CURL* curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+    int httpCode(0);
+    std::unique_ptr<std::string> httpData(new std::string());
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, httpData.get());
+    curl_easy_perform(curl);
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
+    curl_easy_cleanup(curl);
+
+    if (httpCode == 200)
+    {
+        std::cout << "\nGot successful response from " << url << std::endl;
+
+        std::string strData = *httpData;
+
+        HtmlParser baseParse(url, strData);
+
+        //std::cout << baseParse.getContent() << std::endl;
+        HtmlElement asd = baseParse.getNextTag();
+
+        asd.getChild(0)->displayInfo();
+
     }
-    fib_file.close();
+    else
+    {
+        std::cout << "Couldn't GET from " << url << " - exiting" << std::endl;
+        return 1;
+    }
+    //testing::InitGoogleTest(&argc, argv);
+    //RUN_ALL_TESTS();
     return 0;
 }
