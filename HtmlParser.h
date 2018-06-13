@@ -18,11 +18,16 @@ public:
     std::vector<HtmlElement> getTags();
     HtmlElement getNextTag();
     HtmlElement parse_sub(HtmlElement cur_el, std::string cur_text);
+    HtmlElement getRoot();
 private:
+    HtmlElement root;
     std::string url, url_content, unparsed_text;
     std::vector<HtmlElement> tags;
     void pushTag(HtmlElement el);
     std::string checkNextTag(std::string htmlText);
+    std::string& ltrim(std::string& s, const char* t = " \t\n\r\f\v");
+    HtmlElement loopParse(std::string cur_text);
+    std::string getTag(std::string raw_text);
 };
 
 

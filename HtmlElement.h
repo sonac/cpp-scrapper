@@ -17,9 +17,9 @@ public:
     std::string getElementName();
     std::vector<HtmlElement*> getChildren();
     HtmlElement* getChild(int i);
+    HtmlElement* popChild();
     HtmlElement* getParent();
-    void addChild(HtmlElement& child);
-    void popChild();
+    void addChild(HtmlElement *child);
     void setParent(HtmlElement* el);
     bool hasChildren();
     bool hasParent();

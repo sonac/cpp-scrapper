@@ -29,11 +29,12 @@ void HtmlElement::init(std::string &c_name, std::vector<HtmlElement*> c_children
 }
 
 void HtmlElement::displayInfo() {
-    std::cout << "Type: " << element_name << std::endl;
+    std::cout << element_name << std::endl;
     if (!(children.empty())) {
         std::cout << "Children { ";
         for (auto itm : children)
-            std::cout << itm -> element_name << " ";
+            //std::cout << itm -> element_name << " ";
+            itm->displayInfo();
         std::cout << "}" << std::endl;
     }
 }
@@ -46,12 +47,15 @@ std::vector<HtmlElement*> HtmlElement::getChildren() {
     return children;
 }
 
-void HtmlElement::addChild(HtmlElement& child) {
-    children.push_back(&child);
+void HtmlElement::addChild(HtmlElement *child) {
+    //this->displayInfo();
+    //child->displayInfo();
+    child -> setParent(this);
+    children.push_back(child);
 }
 
-void HtmlElement::popChild() {
-    children.pop_back();
+HtmlElement* HtmlElement::popChild() {
+    return children.at(children.size() - 1);
 }
 
 HtmlElement* HtmlElement::getChild(int i) {

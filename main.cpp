@@ -26,7 +26,7 @@ namespace
 }
 
 int main(int argc, char* argv[]) {
-    std::string url("https://neon-pictures.herokuapp.com/");
+    std::string url("https://prodota.ru/forum/index.php?showforum=15");
 
     CURL* curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -54,7 +54,9 @@ int main(int argc, char* argv[]) {
         //std::cout << baseParse.getContent() << std::endl;
         HtmlElement asd = baseParse.getNextTag();
 
-        asd.getChild(0)->displayInfo();
+        //HtmlElement qwe = baseParse.getRoot();
+
+        asd.displayInfo();
 
     }
     else

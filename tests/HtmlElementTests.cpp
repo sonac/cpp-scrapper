@@ -28,13 +28,13 @@ TEST_F(ClassDeclaration, simpleHtmlElelemtCreation) {
 };
 
 TEST_F(ClassDeclaration, childrenCorrectlyCreated) {
-    base.addChild(tag1);
+    base.addChild(&tag1);
     //base.displayInfo();
     ASSERT_EQ(base.getElementName(), html_name);
 };
 
 TEST_F(ClassDeclaration, nestingChildren) {
-    tag1.addChild(tag2);
+    tag1.addChild(&tag2);
     tag1.displayInfo();
     ASSERT_EQ(tag1.getChildren().size(), 1);
 };
